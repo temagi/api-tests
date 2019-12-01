@@ -1,6 +1,6 @@
 import com.fasterxml.jackson.annotation.JsonProperty
 
-data class Post (
+data class Post(
     @JsonProperty("userId")
     val userId: Int,
     @JsonProperty("id")

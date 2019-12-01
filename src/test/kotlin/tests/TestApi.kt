@@ -11,7 +11,7 @@ import org.hamcrest.CoreMatchers.notNullValue
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-class TestApi: BaseTest() {
+class TestApi : BaseTest() {
     // All posts
     @Test
     fun getPostsListTest() {
@@ -33,7 +33,7 @@ class TestApi: BaseTest() {
             .get(POSTS.ulr + "/40")
         .then()
             .statusCode(200)
-            //.body("$.size()", equalTo(1))
+            // .body("$.size()", equalTo(1))
             .body("userId", equalTo(4))
             .body("id", equalTo(40))
             .body("title", equalTo("enim quo cumque"))
@@ -62,7 +62,7 @@ class TestApi: BaseTest() {
                 .get(COMMENTS.ulr + "?postId=4")
             .then()
                 .statusCode(200)
-                //.body("$.size()", equalTo(5))
+                // .body("$.size()", equalTo(5))
             .extract()
                 .body()
                 .jsonPath()
