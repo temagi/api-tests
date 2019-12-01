@@ -1,3 +1,9 @@
+package tests
+
+import Comment
+import Post
+import helpers.Endpoints.COMMENTS
+import helpers.Endpoints.POSTS
 import io.restassured.RestAssured
 import io.restassured.RestAssured.given
 import io.restassured.parsing.Parser
@@ -13,10 +19,9 @@ class TestApi {
     @Test
     fun getPostsListTest() {
         RestAssured.defaultParser = Parser.JSON
-        // TODO: Move endpoints to enum
         given().
         `when`()
-            .get(url + "/posts")
+            .get(url + POSTS.ulr)
         .then()
             .statusCode(200)
             .body("$.size()", equalTo(100))
@@ -30,7 +35,7 @@ class TestApi {
         RestAssured.defaultParser = Parser.JSON
         given()
         .`when`()
-            .get(url + "/posts/40")
+            .get(url + POSTS.ulr + "/40")
         .then()
             .statusCode(200)
             //.body("$.size()", equalTo(1))
@@ -47,14 +52,20 @@ class TestApi {
     @Test
     fun getCommentOfPost() {
         RestAssured.defaultParser = Parser.JSON
-        val expectedComment = Comment(4, 17, "eos est animi quis", "Preston_Hudson@blaise.tv", "consequatur necessitatibus totam sed sit dolorum\n" +
-                "recusandae quae odio excepturi voluptatum harum voluptas\n" +
-                "quisquam sit ad eveniet delectus\n" +
-                "doloribus odio qui non labore")
+        val expectedComment = Comment(
+            4,
+            17,
+            "eos est animi quis",
+            "Preston_Hudson@blaise.tv",
+            "consequatur necessitatibus totam sed sit dolorum\n" +
+                    "recusandae quae odio excepturi voluptatum harum voluptas\n" +
+                    "quisquam sit ad eveniet delectus\n" +
+                    "doloribus odio qui non labore"
+        )
         val comment =
             given()
             .`when`()
-                .get(url + "/comments?postId=4")
+                .get(url + COMMENTS.ulr + "?postId=4")
             .then()
                 .statusCode(200)
                 //.body("$.size()", equalTo(5))
@@ -71,13 +82,18 @@ class TestApi {
     @Test
     fun getPostOfUser() {
         RestAssured.defaultParser = Parser.JSON
-        val expectedPost = Post(5, 42, "commodi ullam sint et excepturi error explicabo praesentium voluptas", "odio fugit voluptatum ducimus earum autem est incidunt voluptatem\n" +
-                "odit reiciendis aliquam sunt sequi nulla dolorem\n" +
-                "non facere repellendus voluptates quia\n" +
-                "ratione harum vitae ut")
+        val expectedPost = Post(
+            5,
+            42,
+            "commodi ullam sint et excepturi error explicabo praesentium voluptas",
+            "odio fugit voluptatum ducimus earum autem est incidunt voluptatem\n" +
+                    "odit reiciendis aliquam sunt sequi nulla dolorem\n" +
+                    "non facere repellendus voluptates quia\n" +
+                    "ratione harum vitae ut"
+        )
         val actualPost = given()
             .`when`()
-                .get(url + "/posts?userId=5")
+                .get(url + POSTS.ulr + "?userId=5")
             .then()
                 .statusCode(200)
             .extract()
@@ -99,7 +115,7 @@ class TestApi {
             .body(newPost)
             .log().all()
         .`when`()
-            .post(url + "/posts")
+            .post(url + POSTS.ulr)
         .then()
             .statusCode(201) // Created
             // TODO: map to Post and compare objects, need to validate only id directly
@@ -117,7 +133,7 @@ class TestApi {
         RestAssured.defaultParser = Parser.JSON
         val posts = given()
             .`when`()
-                .get(url + "/posts?userId=938")
+                .get(url + POSTS.ulr + "?userId=938")
             .then()
                 .statusCode(200)
             .extract()
@@ -125,9 +141,9 @@ class TestApi {
                 .path<List<Int>>("id")
         posts.forEach {
             given()
-                .`when`()
-                    .delete(url + "/posts/" + it)
-                .then()
+            .`when`()
+                .delete(url + POSTS.ulr + "/" + it)
+            .then()
                 .statusCode(200)
         }
     }
