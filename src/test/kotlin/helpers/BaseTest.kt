@@ -18,12 +18,6 @@ abstract class BaseTest {
         }
 
         RestAssured.defaultParser = Parser.JSON
-        // looks like CloudFlare block access from Russia to typicode.com today
-        // RestAssured.proxy("178.18.62.195", 80);
-        // TODO: explore, does we need to set additional log level here or not
-        // looks like CloudFlare block access from Russia to typicode.com today
-        // RestAssured.proxy("178.18.62.195", 80);
-        // TODO: explore, does we need to set additional log level here or not
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails()
     }
 }

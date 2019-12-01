@@ -7,7 +7,6 @@ import helpers.Endpoints.COMMENTS
 import helpers.Endpoints.POSTS
 import io.restassured.RestAssured.given
 import org.hamcrest.CoreMatchers.equalTo
-import org.hamcrest.CoreMatchers.notNullValue
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -39,7 +38,6 @@ class TestApi : BaseTest() {
             .get(POSTS.ulr + "/${id}")
         .then()
             .statusCode(200)
-            // .body("$.size()", equalTo(1))
             .body("userId", equalTo(4))
             .body("id", equalTo(id))
             .body("title", equalTo("enim quo cumque"))
@@ -59,7 +57,6 @@ class TestApi : BaseTest() {
                 .get(COMMENTS.ulr + "?postId=${expectedComment.postId}")
             .then()
                 .statusCode(200)
-                // .body("$.size()", equalTo(5))
             .extract()
                 .body()
                 .jsonPath()
@@ -82,7 +79,6 @@ class TestApi : BaseTest() {
                 .body()
                 .jsonPath()
                 .getList(".", Post::class.java)
-                // TODO: How about check there is no more than 1 post with same id?
                 .filter { post -> post.id == expectedPost.id }
                 .first()
         assertEquals(expectedPost, actualPost)
@@ -91,20 +87,18 @@ class TestApi : BaseTest() {
     @Test
     fun postCreateNewPost() {
         val newPost = Post(userId = 1, title = "New super post", body = "So cool, much post, very wow")
-        given()
+        val response = given()
             .contentType("application/json")
             .body(newPost)
-            .log().all()
         .`when`()
             .post(POSTS.ulr)
         .then()
             .statusCode(201) // Created
-            // TODO: map to Post and compare objects, need to validate only id directly
-            .body("userId", equalTo(newPost.userId))
-            .body("title", equalTo(newPost.title))
-            .body("body", equalTo(newPost.body))
-            .body("id", notNullValue())
-            .log().all()
+        .extract()
+            .body()
+            .jsonPath()
+            .getObject(".", Post::class.java)
+        assertEquals(response, newPost.copy(id = response.id))
         // TODO: IRL here should be additional check that resource have been really created
     }
 
