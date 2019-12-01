@@ -2,26 +2,22 @@ package tests
 
 import Comment
 import Post
+import helpers.BaseTest
 import helpers.Endpoints.COMMENTS
 import helpers.Endpoints.POSTS
-import io.restassured.RestAssured
 import io.restassured.RestAssured.given
-import io.restassured.parsing.Parser
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.notNullValue
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-class TestApi {
-    val url = "https://jsonplaceholder.typicode.com"
-
+class TestApi: BaseTest() {
     // All posts
     @Test
     fun getPostsListTest() {
-        RestAssured.defaultParser = Parser.JSON
-        given().
-        `when`()
-            .get(url + POSTS.ulr)
+        given()
+        .`when`()
+            .get(POSTS.ulr)
         .then()
             .statusCode(200)
             .body("$.size()", equalTo(100))
@@ -32,10 +28,9 @@ class TestApi {
     // TODO: Make test parametrized, here and below
     @Test
     fun getPostWithId() {
-        RestAssured.defaultParser = Parser.JSON
         given()
         .`when`()
-            .get(url + POSTS.ulr + "/40")
+            .get(POSTS.ulr + "/40")
         .then()
             .statusCode(200)
             //.body("$.size()", equalTo(1))
@@ -51,7 +46,6 @@ class TestApi {
     // comment with id = 17 of post with id = 4
     @Test
     fun getCommentOfPost() {
-        RestAssured.defaultParser = Parser.JSON
         val expectedComment = Comment(
             4,
             17,
@@ -65,7 +59,7 @@ class TestApi {
         val comment =
             given()
             .`when`()
-                .get(url + COMMENTS.ulr + "?postId=4")
+                .get(COMMENTS.ulr + "?postId=4")
             .then()
                 .statusCode(200)
                 //.body("$.size()", equalTo(5))
@@ -81,7 +75,6 @@ class TestApi {
     // post with id = 42 and userId = 5
     @Test
     fun getPostOfUser() {
-        RestAssured.defaultParser = Parser.JSON
         val expectedPost = Post(
             5,
             42,
@@ -93,7 +86,7 @@ class TestApi {
         )
         val actualPost = given()
             .`when`()
-                .get(url + POSTS.ulr + "?userId=5")
+                .get(POSTS.ulr + "?userId=5")
             .then()
                 .statusCode(200)
             .extract()
@@ -108,14 +101,13 @@ class TestApi {
 
     @Test
     fun postCreateNewPost() {
-        RestAssured.defaultParser = Parser.JSON
         val newPost = Post(userId = 1, title = "New super post", body = "So cool, much post, very wow")
         given()
             .contentType("application/json")
             .body(newPost)
             .log().all()
         .`when`()
-            .post(url + POSTS.ulr)
+            .post(POSTS.ulr)
         .then()
             .statusCode(201) // Created
             // TODO: map to Post and compare objects, need to validate only id directly
@@ -130,10 +122,9 @@ class TestApi {
     // delete posts of user with id = 938
     @Test
     fun deletePostsOfUser() {
-        RestAssured.defaultParser = Parser.JSON
         val posts = given()
             .`when`()
-                .get(url + POSTS.ulr + "?userId=938")
+                .get(POSTS.ulr + "?userId=938")
             .then()
                 .statusCode(200)
             .extract()
@@ -142,7 +133,7 @@ class TestApi {
         posts.forEach {
             given()
             .`when`()
-                .delete(url + POSTS.ulr + "/" + it)
+                .delete(POSTS.ulr + "/" + it)
             .then()
                 .statusCode(200)
         }
