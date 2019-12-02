@@ -35,7 +35,7 @@ class TestApi : BaseTest() {
     fun getPostWithId(id: Int) {
         given()
         .`when`()
-            .get(POSTS.ulr + "/${id}")
+            .get(POSTS.ulr + "/$id")
         .then()
             .statusCode(200)
             .body("userId", equalTo(4))
@@ -108,7 +108,7 @@ class TestApi : BaseTest() {
     fun deletePostsOfUser(userId: Int) {
         val posts = given()
             .`when`()
-                .get(POSTS.ulr + "?userId=${userId}")
+                .get(POSTS.ulr + "?userId=$userId")
             .then()
                 .statusCode(200)
             .extract()
